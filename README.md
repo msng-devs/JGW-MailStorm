@@ -11,6 +11,45 @@ Pipeline 패턴을 사용하여 구현되어있으며, 백엔드 서비스에 PU
 
 Jinja2 기반 템플릿 엔진을 사용하여 손쉽게 메일 템플릿을 구성할 수 있습니다.
 
+### 사용법 - 서비스 구성
+
+해당 서비스는 Docker를 사용하여 구성되어있습니다.
+
+1. 해당 repository를 clone합니다.
+```bash
+git clone https://github.com/msng-devs/JGW-MailStorm
+```
+2. 디렉토리 최상단에 .env 파일을 생성하고 아래 내용을 추가합니다.
+```bash
+COLLECTOR_PORT= COLLECTOR가 사용할 포트입니다. WORKER 의 처리 결과를 수신합니다.
+WORKER_PORT= WORKER가 사용할 포트입니다. 해당 포트로 메시지를 수신합니다.
+WORKER_POOL_SIZE= WORKER의 갯수를 지정합니다.
+SMTP_HOST= SMTP 서버의 호스트 주소입니다.
+SMTP_PORT= SMTP 서버의 포트입니다.
+SMTP_USER= SMTP 서버의 사용자 이름입니다.
+SMTP_PASSWORD= SMTP 서버의 비밀번호입니다.
+SMTP_FROM= SMTP 서버의 발신자 주소입니다.
+```
+
+3. Dockerfile을 빌드합니다.
+```bash
+docker build -t your-image-name .
+```
+
+4.생성된 이미지를 사용하여 컨테이너를 실행합니다.
+```bash
+docker run -d \
+  --name your-container-name \
+  -v /path/to/data:/app/data \
+  -p smtp-port:smtp-port \
+  your-image-name
+```
+*smtp-port 는 SMTP 서버의 포트입니다. 해당 포트를 외부에 노출시켜야 메일 발송이 가능합니다.*
+
+*필요할 경우 WORKER의 포트를 노출해야합니다. 해당 WORKER의 포트로 메시지를 전송해야합니다.*
+
+*/app/data 디렉토리에 템플릿 파일 및 database 파일이 생성됩니다.*
+
 ### 사용법 - 메일 발송
 
 서비스를 사용하기 위해서는, 소개 항목에서 언급한 것 처럼 PUSH 소켓을 구성해야합니다.

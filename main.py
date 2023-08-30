@@ -7,6 +7,7 @@ from src.helpers.config import config
 from src.helpers.log import setup_logging
 from src.model.model import init_db
 from src.model.template import refresh_template_list, get
+
 setup_logging()
 if __name__ == '__main__':
 
