@@ -15,7 +15,8 @@ def create(result: Result):
     try:
         query = "INSERT INTO history (run_date, service, recipient, subject, template, arg, status, message) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         cursor.execute(query, (
-            datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), result.service, result.recipient, result.subject, result.template, json.dumps(result.arg),
+            datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), result.service, result.recipient, result.subject,
+            result.template, result.to_arg_json().replace("\n",""),
             str(result.status),
             result.message))
         conn.commit()
@@ -24,3 +25,20 @@ def create(result: Result):
         conn.close()
         raise e
     conn.close()
+
+
+def getAll(limit: int):
+    conn = sqlite3.connect(db_file_path)
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "SELECT run_date, service , status , template , subject, recipient ,arg, message FROM history ORDER BY run_date desc LIMIT ?",
+            (limit,))
+        rows = cursor.fetchall()
+        conn.commit()
+    except Exception as e:
+        print(e)
+        conn.close()
+        return None
+    conn.close()
+    return rows

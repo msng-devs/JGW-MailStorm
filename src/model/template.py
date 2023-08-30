@@ -11,7 +11,7 @@ template_file_path = get_absolute_path(['data', 'template'])
 
 
 def refresh_template_list() -> bool:
-    #get file list
+    # get file list
     files = find_all_filenames(template_file_path)
 
     if files is None or len(files) == 0:
@@ -21,7 +21,7 @@ def refresh_template_list() -> bool:
     conn = sqlite3.connect(db_file_path)
     cursor = conn.cursor()
 
-    #delete all template
+    # delete all template
     try:
         delete_all(conn, cursor)
 
@@ -31,7 +31,7 @@ def refresh_template_list() -> bool:
         conn.close()
         return False
 
-    #create template
+    # create template
     for file in files:
         logging.info(f"Create template: {file}")
         try:
@@ -87,6 +87,23 @@ def get(name: str):
 
     except Exception as e:
         logging.error(f"Failed get template: {name} error: {str(e)}")
+        conn.rollback()
+
+    conn.close()
+    return row
+
+
+def getAll(limit: int):
+    conn = sqlite3.connect(db_file_path)
+    cursor = conn.cursor()
+    row = None
+    try:
+        cursor.execute("SELECT * FROM template ORDER BY id asc LIMIT ?", (limit,))
+        row = cursor.fetchall()
+        conn.commit()
+
+    except Exception as e:
+        print(e)
         conn.rollback()
 
     conn.close()
