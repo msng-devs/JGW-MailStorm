@@ -3,6 +3,7 @@ import os
 import shutil
 from multiprocessing import Process
 
+from src.core.streamer import run_streamer
 from src.core.worker import run_workers
 from src.core.collector import run_collector
 from src.helpers.config import config
@@ -33,4 +34,5 @@ if __name__ == '__main__':
         exit(1)
 
     Process(target=run_collector, args=(config.collector_port,)).start()
+    Process(target=run_streamer, args=(config.streamer_port,config.worker_port,)).start()
     run_workers(config.worker_pool_size, config.worker_port, config.collector_port)
