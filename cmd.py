@@ -3,7 +3,15 @@ import src.model.template as template
 from prettytable import PrettyTable
 from src.helpers.log import setup_logging
 import src.model.history as history
+
 setup_logging()
+
+
+def truncate_string(input_string, max_length, truncation_indicator="..."):
+    if len(input_string) <= max_length:
+        return input_string
+    else:
+        return input_string[:max_length - len(truncation_indicator)] + truncation_indicator
 
 
 def print_help():
@@ -11,6 +19,7 @@ def print_help():
     print("The following commands are available: \n")
     print("[show] [count] : show mail templates")
     print("[history] [count] : show mail history")
+    print("[find] [id] : show mail history by id")
     print("[refresh] : refresh mail template")
     print("[help] or [?] : show this help message")
     print("[exit] : exit program")
@@ -45,19 +54,34 @@ def run_cmd(cmd, args):
         if cnt is None:
             cnt = 10
 
-        result = history.getAll(cnt)
+        result = history.get_all(cnt)
 
         if result is None or len(result) == 0:
             print("Not found mail history")
             return
-        #run_date, service , status , template , subject, recipient ,arg, message
-        table = PrettyTable(["Date", "Service", "Status", "Template", "Subject", "Recipient", "Arg", "Message"])
+        # run_date, service , status , template , subject, recipient ,arg, message
+        table = PrettyTable(["ID", "Date", "Service", "Status", "Template", "Subject"])
 
         for row in result:
-            table.add_row([row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]])
+            table.add_row(
+                [row[8], row[0], truncate_string(row[1], 8), truncate_string(row[2], 8), truncate_string(row[3], 8),
+                 truncate_string(row[4], 8)])
 
         print(table)
 
+    elif cmd == "find":
+        id = args
+        result = history.get_by_id(id)
+        # id,run_date, service , status , template , subject, recipient ,arg, message
+        print("ID: " + str(result[0]))
+        print("Date: " + str(result[1]))
+        print("Service: " + str(result[2]))
+        print("Status: " + str(result[3]))
+        print("Template: " + str(result[4]))
+        print("Subject: " + str(result[5]))
+        print("Recipient: " + str(result[6]))
+        print("Arg: " + str(result[7]))
+        print("Message: " + str(result[8]))
 
     elif cmd == "refresh":
         result = template.refresh_template_list()
