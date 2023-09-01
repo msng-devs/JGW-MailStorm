@@ -22,23 +22,18 @@ def run_worker(worker_id: str, port: int, collector_port: int):
     context = zmq.Context()
 
     work_receiver = context.socket(zmq.PULL)
-    work_receiver.connect(f"tcp://0.0.0.0:{port}")
+    work_receiver.connect(f"tcp://127.0.0.1:{port}")
 
     collector_sender = context.socket(zmq.PUSH)
     collector_sender.connect(f"tcp://127.0.0.1:{collector_port}")
 
-    poller = zmq.Poller()
-    poller.register(work_receiver, zmq.POLLIN)
-
     logging.info(f"[Worker] worker {worker_id} started")
     while True:
-        sockets = dict(poller.poll())
-        if sockets.get(work_receiver) == zmq.POLLIN:
-            message = work_receiver.recv_json()
-            try:
-                process_request(message, collector_sender, worker_id)
-            except Exception as e:
-                logging.error(f"[Worker] worker {worker_id} error: {str(e)}")
+        message = work_receiver.recv_json()
+        try:
+            process_request(message, collector_sender, worker_id)
+        except Exception as e:
+            logging.error(f"[Worker] worker {worker_id} error: {str(e)}")
 
 
 def run_workers(pool_size: int, port: int, collector_port: int):
