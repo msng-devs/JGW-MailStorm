@@ -22,7 +22,7 @@ def run_worker(worker_id: str, port: int, collector_port: int):
     context = zmq.Context()
 
     work_receiver = context.socket(zmq.PULL)
-    work_receiver.connect(f"tcp://*:{port}")
+    work_receiver.connect(f"tcp://0.0.0.0:{port}")
 
     collector_sender = context.socket(zmq.PUSH)
     collector_sender.connect(f"tcp://127.0.0.1:{collector_port}")
