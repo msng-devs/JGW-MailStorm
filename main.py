@@ -16,7 +16,7 @@ setup_logging()
 
 def init_data():
     data_path = get_absolute_path(['data', 'template'])
-    bootstrap_path = get_absolute_path(['bootstrap', 'template', 'plain_text.html'])
+    bootstrap_path = get_absolute_path(['bootstrap', 'plain_text.html'])
 
     if not os.path.exists(data_path):
         logging.info("Initialize data directory")
