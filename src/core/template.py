@@ -25,7 +25,7 @@ def parse(path: str) -> str:
         args_line = template_file.readline().strip()
         if args_line.startswith("<!--") and args_line.endswith("-->"):
             data = args_line[4:-3]
-            data.replace(" ", "")
+            data = data.replace(" ", "")
         else:
             raise TemplateFormatException("템플릿 형식이 잘못되었습니다.")
     return data
