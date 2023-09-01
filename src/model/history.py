@@ -27,14 +27,30 @@ def create(result: Result):
     conn.close()
 
 
-def getAll(limit: int):
+def get_all(limit: int):
     conn = sqlite3.connect(db_file_path)
     cursor = conn.cursor()
     try:
         cursor.execute(
-            "SELECT run_date, service , status , template , subject, recipient ,arg, message FROM history ORDER BY run_date desc LIMIT ?",
+            "SELECT run_date, service , status , template , subject, recipient ,arg, message, id FROM history ORDER BY run_date desc LIMIT ?",
             (limit,))
         rows = cursor.fetchall()
+        conn.commit()
+    except Exception as e:
+        print(e)
+        conn.close()
+        return None
+    conn.close()
+    return rows
+
+def get_by_id(id:int):
+    conn = sqlite3.connect(db_file_path)
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "SELECT id,run_date, service , status , template , subject, recipient ,arg, message FROM history WHERE id = ?",
+            (id,))
+        rows = cursor.fetchone()
         conn.commit()
     except Exception as e:
         print(e)
