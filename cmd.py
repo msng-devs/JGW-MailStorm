@@ -70,6 +70,9 @@ def run_cmd(cmd, args):
         print(table)
 
     elif cmd == "find":
+        if(args is None):
+            print("If you want to find history, you must input id")
+            print("[find] [id] : show mail history by id")
         id = args
         result = history.get_by_id(id)
         # id,run_date, service , status , template , subject, recipient ,arg, message
